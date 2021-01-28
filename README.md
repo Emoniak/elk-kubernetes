@@ -1,7 +1,7 @@
 # elk-kubernetes
 Petit projet perso pour apprendre la stack ELK et kubernetes
 
-#matériel utilisé
+# matériel utilisé
 une machine virtuelle debian sans interface graphique
 un cluster kubernetes gratuit dans IBM Cloud
 
