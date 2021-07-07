@@ -1,0 +1,45 @@
+---
+- name: transfert script configureFile
+  become: true
+  ansible.builtin.copy:
+    src: ../../../Conf/configureFile.sh
+    dest: /configureFile.sh
+    owner: root
+    group: root
+    mode: '0644'
+    backup: false
+
+- name: téléchargement de elastic
+  get_url:
+    url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{elk_version}}-x86_64.rpm
+    dest: /opt/elasticsearch-{{elk_version}}.rpm
+    mode: 0440
+  when: parefeu_open is succeeded
+  register: elastic_dl
+
+- name: instalation
+  dnf:
+    name: /opt/elasticsearch-{{elk_version}}.rpm
+    state: present
+  register: installation_elastic
+  when: elastic_dl is succeeded
+
+- name: copy du fichier de config
+  ansible.builtin.copy:
+    src: ../../../Conf/elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: root
+    mode: '0644'
+    backup: false
+  when: installation_elastic is succeeded
+  register: copy_config
+
+- name: configure file
+  shell: sh /configureFile.sh
+  when: copy_config is succeeded
+  register: config
+
+- name: activer le service
+  shell: systemctl enable elasticsearch --now
+  when: config is succeeded

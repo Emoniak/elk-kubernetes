@@ -1,0 +1,36 @@
+---
+  # tasks pour toutes les machines
+
+- name: Update 
+  become: true
+  dnf:
+    name: "*"
+    state: latest
+
+- name: instalation ifconfig
+  become: true
+  dnf:
+    name: net-tools
+    state: latest
+
+- name: instalation du JDK
+  become: true
+  dnf:
+    name: java-11-openjdk-headless
+    state: latest
+
+- name: transfert script firewall
+  ansible.builtin.copy:
+    src: ../../../Conf/firewall/logstash.sh
+    dest: /firewallRule.sh
+    owner: root
+    group: root
+    mode: '0644'
+    backup: false
+  register: parefeu_file
+    
+- name: parefeu rule
+  become: true
+  shell: sh /firewallRule.sh
+  register: parefeu_open
+  when: parefeu_file is succeeded

@@ -1,0 +1,19 @@
+---
+- name: "deployer Elastique"
+  hosts: elastic
+  roles:
+    - Commun
+    - elasticsearch
+
+- name: deployer kibana
+  hosts: kibana
+  roles: 
+    - Commun
+    - Kibana
+
+- name: deployer logstash
+  hosts: logstash
+  roles:
+    - Commun
+    - Logstash
+      

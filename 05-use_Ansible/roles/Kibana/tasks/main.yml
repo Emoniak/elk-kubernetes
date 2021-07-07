@@ -1,0 +1,39 @@
+---
+
+- name: téléchargement de kibana
+  get_url:
+    url: https://artifacts.elastic.co/downloads/kibana/kibana-{{elk_version}}-x86_64.rpm
+    dest: /opt/kibana-{{elk_version}}.rpm
+    mode: 0440
+  register: kibana_dl
+  when: parefeu_open is succeeded
+
+- name: installation de kibana
+  dnf:
+    name: /opt/kibana-{{elk_version}}.rpm
+    state: present
+  register: kibana_instalation
+  when: kibana_dl is succeeded
+
+- name: copy conf
+  ansible.builtin.copy:
+    src: ../../../Conf/kibana.yml
+    dest: /etc/kibana/kibana.yml
+    owner: root
+    group: root
+    mode: '0644'
+    backup: false
+  when: kibana_instalation is succeeded
+  register: copy_config
+
+- name: change conf
+  replace:
+    path: /etc/kibana/kibana.yml
+    regexp: 'hostselk'
+    replace: "{{hostselk}}"
+  when: copy_config is succeeded
+  register: config
+
+- name: activer le service
+  shell: systemctl enable kibana --now
+  when: config is succeeded
