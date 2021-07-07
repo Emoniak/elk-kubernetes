@@ -1,4 +1,19 @@
 ---
+- name: transfert script firewall
+  ansible.builtin.copy:
+    src: ../../../Conf/firewall/kibana.sh
+    dest: /firewallRule.sh
+    owner: root
+    group: root
+    mode: '0644'
+    backup: false
+  register: parefeu_file
+    
+- name: parefeu rule
+  become: true
+  shell: sh /firewallRule.sh
+  register: parefeu_open
+  when: parefeu_file is succeeded
 
 - name: téléchargement de kibana
   get_url:
