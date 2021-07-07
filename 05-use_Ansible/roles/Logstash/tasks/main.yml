@@ -1,19 +1,11 @@
 ---
-- name: transfert script firewall
-  ansible.builtin.copy:
-    src: ../../../Conf/firewall/logstash.sh
-    dest: /firewallRule.sh
-    owner: root
-    group: root
-    mode: '0644'
-    backup: false
-  register: parefeu_file
-    
 - name: parefeu rule
-  become: true
-  shell: sh /firewallRule.sh
+  shell: firewall-cmd --permanent --add-port=5044/tcp
   register: parefeu_open
-  when: parefeu_file is succeeded
+
+- name: parefeu reboot
+  shell: firewall-cmd --reload
+  when : parefeu_open is succeeded
 
 - name: téléchargement de logstash
   get_url:
