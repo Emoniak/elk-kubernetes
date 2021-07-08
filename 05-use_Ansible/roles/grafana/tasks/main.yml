@@ -1,0 +1,26 @@
+---
+- name: parefeu rule
+  shell: firewall-cmd --permanent --add-port=3000/tcp
+  register: parefeu_open
+
+- name: parefeu reboot
+  shell: firewall-cmd --reload
+  when : parefeu_open is succeeded
+
+- name: téléchargement de grafana
+  get_url:
+    url: https://dl.grafana.com/oss/release/grafana-8.0.4-1.x86_64.rpm
+    dest: /opt/grafana-8.0.4-1.rpm
+    mode: 0440
+  register: grafana_dl
+
+- name: instalation de grafana
+  dnf:
+    name: /opt/grafana-8.0.4-1.rpm
+    state: present
+  register: grafana_instalation
+  when: grafana_dl is succeeded
+
+- name: activer le service
+  shell: systemctl enable grafana-server --now
+  when: grafana_dl is succeeded

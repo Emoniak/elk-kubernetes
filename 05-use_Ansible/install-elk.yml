@@ -5,11 +5,12 @@
     - Commun
     - elasticsearch
 
-- name: deployer kibana
+- name: deployer dashboards
   hosts: kibana
   roles: 
     - Commun
     - Kibana
+    - grafana
 
 - name: deployer logstash
   hosts: logstash
