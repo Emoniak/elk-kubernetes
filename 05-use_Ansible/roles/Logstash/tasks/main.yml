@@ -1,6 +1,6 @@
 ---
 - name: parefeu rule
-  shell: firewall-cmd --permanent --add-port=5044/tcp
+  shell: firewall-cmd --permanent --add-port=5044/tcp | firewall-cmd  --add-port=514/tcp  --zone=public  --permanent
   register: parefeu_open
 
 - name: parefeu reboot
