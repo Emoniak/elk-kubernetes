@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic-deployment
+  namespace: elk
+  labels:
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: elasticsearch:6.8.20
+          ports:
+            - containerPort: 9200
+              name: db
+              protocol: TCP
+            - containerPort: 9300
+              name: transport
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+          env:
+          - name: "NAMESPACE"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+          volumeMounts:
+            - name: elasticsearch
+              mountPath: /data/
+            - name: elasticsearch-config
+              mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+      volumes:  
+        - name: elasticsearch
+          persistentVolumeClaim:
+            claimName: elastic-storage
+        - name: elasticsearch-config
+          configMap:
+            name: elastic-conf
+            items:
+            - key: elasticsearch.yml
+              path: elasticsearch.yml
+
+      initContainers:
+            - image: alpine:3.6
+              command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+              name: elasticsearch-init
+              securityContext:
+                privileged: true

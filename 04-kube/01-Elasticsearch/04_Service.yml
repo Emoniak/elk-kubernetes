@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-service
+  namespace: elk
+  labels:
+    app: elasticsearch
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
+    kubernetes.io/name: "Elasticsearch"
+spec:
+  selector:
+    app: elasticsearch
+  type: NodePort
+  ports:
+  - port: 9200
+    protocol: TCP
+    targetPort: db
+    nodePort: 30092
+    name: elasticsearch-port
+  selector:
+    app: elasticsearch

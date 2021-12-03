@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elastic-conf
+  namespace: elk
+  labels:
+    name: elastic-conf
+data:
+  elasticsearch.yml: |-
+     cluster.name: "minikube-cluster"
+     network.host: 0.0.0.0

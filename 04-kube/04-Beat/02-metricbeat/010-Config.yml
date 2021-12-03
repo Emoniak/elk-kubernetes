@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metricbeat-config
+  namespace: elk
+  labels:
+    k8s-app: metricbeat
+    kubernetes.io/cluster-service: "true"
+data:
+  metricbeat.yml: |-
+    metricbeat.config.modules:
+      path: ${path.config}/modules.d/*.yml
+      reload.enabled: false
+
+    output.elasticsearch:
+      hosts: ['http://elasticsearch-service.elk.svc:9200']
+    setup.kibana:
+      host: "http://kibana.elk.svc:5601"
