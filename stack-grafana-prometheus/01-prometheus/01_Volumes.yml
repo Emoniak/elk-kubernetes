@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: prometheus-storage
+  namespace: grafana-prometheus
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
